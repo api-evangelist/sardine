@@ -1,0 +1,94 @@
+name: Sardine FinOps
+description: >-
+  Financial operations guidance for managing Sardine API costs. Sardine uses a
+  monthly commit model with consumption-based drawdown across multiple product
+  APIs. Cost optimization requires tracking per-verification and
+  per-transaction consumption across Device, Customer, Crypto, Issuing, and
+  Transaction Monitoring API categories.
+url: https://www.sardine.ai/contact
+created: '2026-06-13'
+modified: '2026-06-13'
+costDrivers:
+  - name: Device API Calls
+    description: >-
+      Charges per device fingerprint and behavior biometrics session. Costs
+      scale with the number of user sessions instrumented for fraud signals.
+    unit: per session
+    category: Device Intelligence
+  - name: Customer Risk Assessments
+    description: >-
+      Charges per customer risk scoring request, including KYC identity
+      verification and KYB business verification calls. Volume-based tiers
+      apply.
+    unit: per verification
+    category: Identity and Compliance
+  - name: Transaction Monitoring Events
+    description: >-
+      Charges per transaction screened for AML compliance, sanctions
+      screening, and customer risk rating. Volume discounts available at
+      enterprise scale.
+    unit: per transaction
+    category: AML Compliance
+  - name: Crypto On-Ramp/Off-Ramp Transactions
+    description: >-
+      Transaction-based fees for fiat-to-crypto and crypto-to-fiat conversion
+      fraud prevention. Fee varies by payment rail and currency pair.
+    unit: per transaction
+    category: Crypto
+  - name: Card Issuing Fraud Checks
+    description: >-
+      Charges per card authorization or transaction screened through the
+      Issuing API for real-time fraud detection.
+    unit: per authorization
+    category: Card Issuing
+  - name: Chargeback Guarantee Program
+    description: >-
+      Optional program providing liability protection on card transactions.
+      Fee structure based on covered transaction volume and chargeback
+      exposure.
+    unit: per covered transaction
+    category: Risk Transfer
+  - name: ACH Indemnification
+    description: >-
+      Optional program covering fraud liabilities on ACH debits. Fee based on
+      covered ACH transaction volume.
+    unit: per covered ACH debit
+    category: Risk Transfer
+  - name: FX Conversion Fee
+    description: >-
+      Nominal fee applied to cross-currency transactions processed through the
+      payments platform.
+    unit: per FX transaction
+    category: Payments
+optimization:
+  recommendations:
+    - description: >-
+        Negotiate a monthly minimum commit aligned to expected baseline volume
+        to secure volume discount rates, then monitor actual consumption against
+        the commit monthly to avoid overages.
+    - description: >-
+        Use Sardine's sandbox environment for all development and QA testing to
+        avoid incurring production consumption charges during integration.
+    - description: >-
+        Scope device instrumentation to high-risk user journeys (account
+        creation, login, payment initiation) rather than all sessions to reduce
+        Device API call volume.
+    - description: >-
+        Batch KYC/KYB verifications where compliance timelines allow, taking
+        advantage of volume tier pricing rather than triggering individual
+        low-volume calls.
+    - description: >-
+        Evaluate the Chargeback Guarantee Program and ACH Indemnification ROI
+        against internal fraud loss rates to determine if risk transfer costs
+        are offset by reduced fraud losses.
+    - description: >-
+        Monitor the Sardine dashboard for per-product consumption reports and
+        set internal alerts when monthly spend approaches the commit threshold.
+billing:
+  model: monthly-commit-with-consumption-drawdown
+  invoicing: monthly
+  notes: >-
+    Sardine does not publish public rate cards. All pricing is established
+    through a custom sales process. Request a detailed pricing proposal from
+    Sardine sales at https://www.sardine.ai/contact to establish committed
+    volume tiers and per-unit rates for each product module.

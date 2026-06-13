@@ -1,0 +1,50 @@
+name: Sardine Plans and Pricing
+description: >-
+  Sardine uses a custom enterprise pricing model based on transaction volume
+  and features used. Pricing is not publicly published as fixed rate cards;
+  instead, customers receive tailored proposals based on their specific use
+  case, integration scope, and volume commitments. Sardine charges a monthly
+  platform commit with consumption-based drawdown for individual product usage.
+url: https://www.sardine.ai/contact
+created: '2026-06-13'
+modified: '2026-06-13'
+plans:
+  - name: Enterprise Plan
+    description: >-
+      Custom pricing tailored to the customer's transaction volume, product
+      mix, and compliance requirements. Includes platform access fees,
+      support, and consumption-based rates for each product module.
+    type: Enterprise
+    url: https://www.sardine.ai/contact
+    contact: sales@sardine.ai
+    pricingModel: custom
+    billingCycle: monthly
+    minimumCommit: true
+    volumeDiscounts: true
+    features:
+      - Device APIs (device fingerprinting, behavior biometrics)
+      - Customer APIs (KYC, KYB, identity risk scoring)
+      - Crypto APIs (on-ramp/off-ramp fraud prevention)
+      - Issuing APIs (card fraud detection)
+      - Transaction Monitoring (AML, sanctions screening)
+      - Card Chargeback Guarantee Program
+      - ACH Indemnification
+      - Sandbox environment access
+      - Dashboard access
+      - Real-time webhooks for fraud alerts
+      - Dedicated support and onboarding
+pricing:
+  model: consumption
+  notes: >-
+    Pricing is calculated per risk assessment or transaction screened, per
+    KYC/KYB verification, and per payment processed (varies by payment method:
+    ACH, card, local rails). FX transactions include a nominal conversion fee.
+    Volume discounts available at enterprise scale. Contact sales for a
+    detailed pricing proposal.
+  factors:
+    - Transaction volume and payment method (ACH, card, local payment rails)
+    - Geographic coverage and currency support
+    - Number of product modules enabled
+    - KYC/KYB verification volume
+    - AML transaction monitoring volume
+    - Chargeback guarantee program enrollment

@@ -1,0 +1,69 @@
+name: Sardine Rate Limits
+description: >-
+  Sardine does not publicly publish specific rate limit thresholds in its
+  developer documentation. Rate limits are enforced at the API gateway level
+  and are configured per customer account based on contracted volume tiers.
+  Specific limits are communicated during onboarding and can be adjusted by
+  contacting Sardine support.
+url: https://docs.sardine.ai/home
+created: '2026-06-13'
+modified: '2026-06-13'
+rateLimits:
+  - name: Device APIs
+    description: >-
+      Rate limits for device fingerprinting and behavior biometrics endpoints.
+      Applied per API key. Exact thresholds configured per account.
+    scope: per-api-key
+    publiclyDocumented: false
+    notes: Contact Sardine for specific limits based on contracted volume.
+  - name: Customer APIs
+    description: >-
+      Rate limits for customer identity, KYC, and KYB risk-scoring endpoints.
+      Applied per API key. Exact thresholds configured per account.
+    scope: per-api-key
+    publiclyDocumented: false
+    notes: Contact Sardine for specific limits based on contracted volume.
+  - name: Crypto APIs
+    description: >-
+      Rate limits for on-ramp and off-ramp fraud prevention endpoints.
+      Applied per API key. Exact thresholds configured per account.
+    scope: per-api-key
+    publiclyDocumented: false
+    notes: Contact Sardine for specific limits based on contracted volume.
+  - name: Issuing APIs
+    description: >-
+      Rate limits for card issuing fraud detection endpoints. Applied per API
+      key. Exact thresholds configured per account.
+    scope: per-api-key
+    publiclyDocumented: false
+    notes: Contact Sardine for specific limits based on contracted volume.
+  - name: Transaction Monitoring APIs
+    description: >-
+      Rate limits for AML transaction monitoring and sanctions screening
+      endpoints. Applied per API key. Exact thresholds configured per account.
+    scope: per-api-key
+    publiclyDocumented: false
+    notes: Contact Sardine for specific limits based on contracted volume.
+authentication:
+  type: API Key
+  description: >-
+    API keys are generated from the Sardine dashboard and are available for
+    both sandbox and production environments. Keys are scoped per environment
+    and per integration.
+  environments:
+    - name: Sandbox
+      description: For development and testing; non-production environment
+    - name: Production
+      description: Live environment with real transaction processing
+errorHandling:
+  rateLimitExceeded:
+    httpStatus: 429
+    notes: >-
+      Standard HTTP 429 Too Many Requests response when rate limits are
+      exceeded. Retry-After header may be included to indicate when requests
+      can resume.
+contact:
+  url: https://docs.sardine.ai/home
+  notes: >-
+    For rate limit details, thresholds, and adjustment requests contact
+    Sardine support via the developer documentation portal.
