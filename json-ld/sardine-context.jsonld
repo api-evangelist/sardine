@@ -1,0 +1,72 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "schema": "https://schema.org/",
+    "sardine": "https://www.sardine.ai/vocab#",
+
+    "name": "schema:name",
+    "description": "schema:description",
+    "url": "schema:url",
+    "image": "schema:image",
+    "dateCreated": "schema:dateCreated",
+    "dateModified": "schema:dateModified",
+
+    "FraudPrevention": "sardine:FraudPrevention",
+    "AMLCompliance": "sardine:AMLCompliance",
+    "TransactionMonitoring": "sardine:TransactionMonitoring",
+    "DeviceIntelligence": "sardine:DeviceIntelligence",
+    "BehaviorBiometrics": "sardine:BehaviorBiometrics",
+    "KYC": "sardine:KYC",
+    "KYB": "sardine:KYB",
+    "IdentityVerification": "sardine:IdentityVerification",
+    "ChargebackProtection": "sardine:ChargebackProtection",
+    "CryptoRisk": "sardine:CryptoRisk",
+    "CardIssuingRisk": "sardine:CardIssuingRisk",
+    "TransactionRiskScore": "sardine:TransactionRiskScore",
+    "CustomerRisk": "sardine:CustomerRisk",
+    "DeviceFingerprint": "sardine:DeviceFingerprint",
+    "SanctionsScreening": "sardine:SanctionsScreening",
+
+    "API": "schema:WebAPI",
+    "baseURL": "schema:url",
+    "humanURL": "schema:url",
+    "documentation": "schema:documentation",
+    "tags": "schema:keywords",
+
+    "provider": {
+      "@id": "schema:provider",
+      "@type": "@id"
+    },
+    "Organization": "schema:Organization",
+    "Blog": "schema:Blog",
+    "BlogPosting": "schema:BlogPosting",
+    "author": "schema:author",
+    "datePublished": "schema:datePublished"
+  },
+  "@graph": [
+    {
+      "@type": "schema:Organization",
+      "@id": "https://www.sardine.ai/",
+      "name": "Sardine",
+      "description": "Agentic financial crime platform offering fraud prevention, AML compliance, and transaction monitoring through a unified REST API.",
+      "url": "https://www.sardine.ai/",
+      "sameAs": [
+        "https://github.com/sardine-ai",
+        "https://www.linkedin.com/company/sardineai/",
+        "https://x.com/sardine"
+      ]
+    },
+    {
+      "@type": "schema:WebAPI",
+      "@id": "https://api.sardine.ai/",
+      "name": "Sardine API",
+      "description": "REST API enabling real-time fraud detection and compliance across the customer lifecycle, including device intelligence, KYC/KYB, AML, transaction monitoring, crypto fraud prevention, and card issuing risk.",
+      "url": "https://docs.sardine.ai/home",
+      "provider": {
+        "@id": "https://www.sardine.ai/"
+      },
+      "documentation": "https://docs.sardine.ai/home"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "aid": "sardine",
+  "name": "Sardine Blog",
+  "description": "Official blog from Sardine covering fraud prevention, AML compliance, financial crime, KYC/KYB, device intelligence, and agentic AI in fintech.",
+  "url": "https://www.sardine.ai/blog",
+  "modified": "2026-06-13",
+  "posts": [
+    {
+      "title": "Anthropic released a KYC agent: Here's what it actually is, and who should use it",
+      "url": "https://www.sardine.ai/blog/anthropic-kyc-agent-what-it-actually-is",
+      "date": "2026-05-08",
+      "author": "Chen Zamir",
+      "tags": [
+        "Agentic AI",
+        "Fraud",
+        "KYC"
+      ],
+      "description": "Examines Anthropic's finance-agents release and their KYC screener tool, separating actual product capabilities from media coverage and assessing fit for compliance needs."
+    }
+  ]
+}
