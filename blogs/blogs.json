@@ -17,5 +17,14 @@
       ],
       "description": "Examines Anthropic's finance-agents release and their KYC screener tool, separating actual product capabilities from media coverage and assessing fit for compliance needs."
     }
-  ]
+  ],
+  "repo": "sardine",
+  "feeds": [
+    {
+      "source": "https://www.linkedin.com/company/sardineai/",
+      "error": "HTTPError"
+    }
+  ],
+  "post_count": 0,
+  "fetched": "2026-06-14T20:42:17Z"
 }
