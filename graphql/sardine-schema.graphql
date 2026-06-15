@@ -1,0 +1,1288 @@
+"""
+Sardine GraphQL Schema
+Fraud prevention and compliance platform for fintech and crypto.
+Conceptual schema derived from the Sardine REST API.
+"""
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+# ─────────────────────────────────────────────
+# Root Types
+# ─────────────────────────────────────────────
+
+type Query {
+  # Device Intelligence
+  device(sessionKey: String!): Device
+  deviceSession(sessionKey: String!): DeviceSession
+
+  # Customer
+  customer(customerId: String!): Customer
+  customers(filter: CustomerFilter, page: Int, pageSize: Int): CustomerConnection
+
+  # Risk Scoring
+  customerRisk(customerId: String!): CustomerRisk
+  transactionRisk(transactionId: String!): TransactionRisk
+
+  # KYC / KYB
+  kycVerification(verificationId: String!): KYCVerification
+  kybVerification(verificationId: String!): KYBVerification
+  document(documentId: String!): IdentityDocument
+
+  # AML / Sanctions
+  amlScreening(screeningId: String!): AMLScreening
+  sanctionsCheck(checkId: String!): SanctionsCheck
+  pep(pepId: String!): PEPRecord
+  adverseMedia(mediaId: String!): AdverseMediaRecord
+
+  # Transactions
+  transaction(transactionId: String!): Transaction
+  transactions(filter: TransactionFilter, page: Int, pageSize: Int): TransactionConnection
+
+  # Crypto
+  cryptoAddress(address: String!, network: CryptoNetwork!): CryptoAddressProfile
+  cryptoTransaction(txHash: String!, network: CryptoNetwork!): CryptoTransactionProfile
+
+  # Cards / Issuing
+  card(cardId: String!): Card
+  cardTransaction(transactionId: String!): CardTransaction
+
+  # Chargebacks
+  chargeback(chargebackId: String!): Chargeback
+  chargebacks(filter: ChargebackFilter, page: Int, pageSize: Int): ChargebackConnection
+
+  # Cases
+  case(caseId: String!): Case
+  cases(filter: CaseFilter, page: Int, pageSize: Int): CaseConnection
+
+  # Alerts
+  alert(alertId: String!): Alert
+  alerts(filter: AlertFilter, page: Int, pageSize: Int): AlertConnection
+
+  # Rules
+  rule(ruleId: String!): Rule
+  rules: [Rule!]!
+
+  # Webhooks
+  webhook(webhookId: String!): Webhook
+  webhooks: [Webhook!]!
+
+  # Organization
+  organization: Organization
+}
+
+type Mutation {
+  # Device Session
+  createDeviceSession(input: CreateDeviceSessionInput!): DeviceSession!
+
+  # Customer
+  createCustomer(input: CreateCustomerInput!): Customer!
+  updateCustomer(customerId: String!, input: UpdateCustomerInput!): Customer!
+
+  # KYC
+  submitKYCVerification(input: KYCVerificationInput!): KYCVerification!
+  updateKYCStatus(verificationId: String!, status: KYCStatus!): KYCVerification!
+
+  # KYB
+  submitKYBVerification(input: KYBVerificationInput!): KYBVerification!
+
+  # AML
+  runAMLScreening(input: AMLScreeningInput!): AMLScreening!
+  dismissAMLMatch(matchId: String!, reason: String!): AMLMatch!
+
+  # Transactions
+  submitTransaction(input: TransactionInput!): Transaction!
+  updateTransactionStatus(transactionId: String!, status: TransactionStatus!): Transaction!
+
+  # Chargebacks
+  submitChargebackDispute(input: ChargebackDisputeInput!): Chargeback!
+  updateChargebackStatus(chargebackId: String!, status: ChargebackStatus!): Chargeback!
+
+  # Cases
+  createCase(input: CreateCaseInput!): Case!
+  updateCase(caseId: String!, input: UpdateCaseInput!): Case!
+  closeCase(caseId: String!, resolution: String!): Case!
+
+  # Alerts
+  acknowledgeAlert(alertId: String!): Alert!
+  resolveAlert(alertId: String!, resolution: AlertResolution!): Alert!
+
+  # Rules
+  createRule(input: CreateRuleInput!): Rule!
+  updateRule(ruleId: String!, input: UpdateRuleInput!): Rule!
+  deleteRule(ruleId: String!): Boolean!
+
+  # Webhooks
+  createWebhook(input: CreateWebhookInput!): Webhook!
+  deleteWebhook(webhookId: String!): Boolean!
+}
+
+# ─────────────────────────────────────────────
+# Device Intelligence
+# ─────────────────────────────────────────────
+
+type Device {
+  deviceId: String!
+  fingerprint: String
+  type: DeviceType
+  os: String
+  osVersion: String
+  browser: String
+  browserVersion: String
+  userAgent: String
+  ipAddress: String
+  ipLocation: GeoLocation
+  vpnDetected: Boolean
+  proxyDetected: Boolean
+  torDetected: Boolean
+  emulatorDetected: Boolean
+  riskScore: Float
+  signals: [DeviceSignal!]!
+  firstSeen: String
+  lastSeen: String
+}
+
+type DeviceSession {
+  sessionKey: String!
+  device: Device
+  behaviorBiometrics: BehaviorBiometrics
+  sessionStart: String
+  sessionEnd: String
+  pageViews: Int
+  riskLevel: RiskLevel
+}
+
+type BehaviorBiometrics {
+  typingCadence: Float
+  mouseMovementPattern: String
+  touchPressure: Float
+  scrollBehavior: String
+  autoFillDetected: Boolean
+  copyPasteDetected: Boolean
+  anomalyScore: Float
+  botLikelihood: Float
+}
+
+type DeviceSignal {
+  name: String!
+  value: String
+  risk: RiskLevel
+}
+
+type GeoLocation {
+  country: String
+  region: String
+  city: String
+  postalCode: String
+  latitude: Float
+  longitude: Float
+  timezone: String
+  isp: String
+  asn: String
+}
+
+# ─────────────────────────────────────────────
+# Customer
+# ─────────────────────────────────────────────
+
+type Customer {
+  customerId: String!
+  externalId: String
+  email: String
+  phone: String
+  name: String
+  dateOfBirth: String
+  address: Address
+  identity: CustomerIdentity
+  risk: CustomerRisk
+  kycStatus: KYCStatus
+  kybStatus: KYBStatus
+  amlStatus: AMLStatus
+  transactions: [Transaction!]!
+  devices: [Device!]!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type CustomerIdentity {
+  governmentIdVerified: Boolean
+  selfieVerified: Boolean
+  addressVerified: Boolean
+  phoneVerified: Boolean
+  emailVerified: Boolean
+  sanctionsCleared: Boolean
+  pepCleared: Boolean
+  adverseMediaCleared: Boolean
+}
+
+type CustomerRisk {
+  customerId: String!
+  overallScore: Float!
+  riskLevel: RiskLevel!
+  signals: [RiskSignal!]!
+  deviceRisk: Float
+  behaviorRisk: Float
+  networkRisk: Float
+  identityRisk: Float
+  transactionRisk: Float
+  evaluatedAt: String!
+}
+
+type CustomerConnection {
+  nodes: [Customer!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type Address {
+  street1: String
+  street2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+}
+
+# ─────────────────────────────────────────────
+# KYC / KYB Verification
+# ─────────────────────────────────────────────
+
+type KYCVerification {
+  verificationId: String!
+  customerId: String!
+  status: KYCStatus!
+  level: KYCLevel!
+  documents: [IdentityDocument!]!
+  selfieCheck: SelfieCheck
+  addressCheck: AddressCheck
+  watchlistCheck: WatchlistCheck
+  createdAt: String!
+  completedAt: String
+  expiresAt: String
+  rejectionReason: String
+}
+
+type KYBVerification {
+  verificationId: String!
+  businessId: String!
+  status: KYBStatus!
+  business: Business
+  uboVerifications: [UBOVerification!]!
+  watchlistCheck: WatchlistCheck
+  createdAt: String!
+  completedAt: String
+  rejectionReason: String
+}
+
+type IdentityDocument {
+  documentId: String!
+  type: DocumentType!
+  number: String
+  country: String
+  issuedAt: String
+  expiresAt: String
+  firstName: String
+  lastName: String
+  dateOfBirth: String
+  verificationStatus: DocumentVerificationStatus!
+  extractedData: DocumentExtractedData
+}
+
+type DocumentExtractedData {
+  mrz: String
+  barcode: String
+  face: String
+  tamperingScore: Float
+}
+
+type SelfieCheck {
+  livenessScore: Float
+  facematchScore: Float
+  status: VerificationStatus!
+}
+
+type AddressCheck {
+  matchScore: Float
+  status: VerificationStatus!
+  source: String
+}
+
+type WatchlistCheck {
+  sanctionsMatch: Boolean!
+  pepMatch: Boolean!
+  adverseMediaMatch: Boolean!
+  matches: [WatchlistMatch!]!
+}
+
+type WatchlistMatch {
+  matchId: String!
+  listName: String!
+  entityName: String!
+  matchScore: Float!
+  status: MatchStatus!
+}
+
+type UBOVerification {
+  uboId: String!
+  name: String!
+  ownershipPercentage: Float
+  kycStatus: KYCStatus!
+}
+
+type Business {
+  name: String!
+  registrationNumber: String
+  taxId: String
+  incorporationDate: String
+  country: String
+  address: Address
+  industry: String
+  website: String
+}
+
+# ─────────────────────────────────────────────
+# AML / Sanctions
+# ─────────────────────────────────────────────
+
+type AMLScreening {
+  screeningId: String!
+  customerId: String!
+  status: AMLStatus!
+  riskRating: RiskLevel!
+  sanctionsMatches: [SanctionsMatch!]!
+  pepMatches: [PEPMatch!]!
+  adverseMediaMatches: [AdverseMediaMatch!]!
+  createdAt: String!
+  completedAt: String
+}
+
+type AMLMatch {
+  matchId: String!
+  type: AMLMatchType!
+  entityName: String!
+  score: Float!
+  status: MatchStatus!
+  dismissedAt: String
+  dismissedReason: String
+}
+
+type SanctionsCheck {
+  checkId: String!
+  entityName: String!
+  entityType: EntityType!
+  matches: [SanctionsMatch!]!
+  clearedAt: String
+}
+
+type SanctionsMatch {
+  matchId: String!
+  listName: String!
+  entityName: String!
+  program: String
+  score: Float!
+  status: MatchStatus!
+}
+
+type PEPRecord {
+  pepId: String!
+  name: String!
+  country: String
+  position: String
+  party: String
+  activeFrom: String
+  activeTo: String
+}
+
+type PEPMatch {
+  matchId: String!
+  pep: PEPRecord!
+  score: Float!
+  status: MatchStatus!
+}
+
+type AdverseMediaRecord {
+  mediaId: String!
+  title: String!
+  url: String
+  source: String
+  publishedAt: String
+  categories: [String!]!
+  sentiment: String
+}
+
+type AdverseMediaMatch {
+  matchId: String!
+  article: AdverseMediaRecord!
+  score: Float!
+  status: MatchStatus!
+}
+
+# ─────────────────────────────────────────────
+# Transactions
+# ─────────────────────────────────────────────
+
+type Transaction {
+  transactionId: String!
+  externalId: String
+  customerId: String!
+  type: TransactionType!
+  status: TransactionStatus!
+  amount: Money!
+  sender: TransactionParty
+  recipient: TransactionParty
+  paymentMethod: PaymentMethod
+  riskScore: Float
+  riskLevel: RiskLevel
+  device: Device
+  ipAddress: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+type TransactionRisk {
+  transactionId: String!
+  overallScore: Float!
+  riskLevel: RiskLevel!
+  signals: [RiskSignal!]!
+  velocityFlags: [VelocityFlag!]!
+  networkFlags: [NetworkFlag!]!
+  deviceFlags: [DeviceFlag!]!
+  recommendation: RiskRecommendation!
+  evaluatedAt: String!
+}
+
+type TransactionParty {
+  name: String
+  accountNumber: String
+  routingNumber: String
+  bankName: String
+  country: String
+  cryptoAddress: String
+  cryptoNetwork: CryptoNetwork
+}
+
+type PaymentMethod {
+  type: PaymentMethodType!
+  last4: String
+  brand: String
+  expiryMonth: Int
+  expiryYear: Int
+  billingAddress: Address
+}
+
+type Money {
+  amount: Float!
+  currency: String!
+}
+
+type TransactionConnection {
+  nodes: [Transaction!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type VelocityFlag {
+  flagType: String!
+  threshold: Float!
+  actual: Float!
+  window: String!
+}
+
+type NetworkFlag {
+  flagType: String!
+  description: String!
+  severity: RiskLevel!
+}
+
+type DeviceFlag {
+  flagType: String!
+  description: String!
+  severity: RiskLevel!
+}
+
+# ─────────────────────────────────────────────
+# Crypto
+# ─────────────────────────────────────────────
+
+type CryptoAddressProfile {
+  address: String!
+  network: CryptoNetwork!
+  riskScore: Float!
+  riskLevel: RiskLevel!
+  clusterName: String
+  clusterCategory: String
+  exposure: CryptoExposure!
+  firstTransactionAt: String
+  lastTransactionAt: String
+  transactionCount: Int
+  totalReceivedUSD: Float
+  totalSentUSD: Float
+}
+
+type CryptoTransactionProfile {
+  txHash: String!
+  network: CryptoNetwork!
+  riskScore: Float!
+  riskLevel: RiskLevel!
+  senderAddress: String
+  recipientAddress: String
+  amountUSD: Float
+  fee: Float
+  timestamp: String
+  senderProfile: CryptoAddressProfile
+  recipientProfile: CryptoAddressProfile
+}
+
+type CryptoExposure {
+  directExposure: [ExposureEntry!]!
+  indirectExposure: [ExposureEntry!]!
+}
+
+type ExposureEntry {
+  category: String!
+  percentage: Float!
+  amountUSD: Float
+}
+
+# ─────────────────────────────────────────────
+# Cards / Issuing
+# ─────────────────────────────────────────────
+
+type Card {
+  cardId: String!
+  customerId: String!
+  last4: String!
+  brand: String
+  network: String
+  type: CardType!
+  status: CardStatus!
+  billingAddress: Address
+  issuedAt: String!
+  expiresAt: String
+}
+
+type CardTransaction {
+  transactionId: String!
+  cardId: String!
+  merchantName: String
+  merchantCategory: String
+  merchantCountry: String
+  amount: Money!
+  authorizationCode: String
+  status: CardTransactionStatus!
+  riskScore: Float
+  riskLevel: RiskLevel
+  device: Device
+  createdAt: String!
+}
+
+# ─────────────────────────────────────────────
+# Chargebacks
+# ─────────────────────────────────────────────
+
+type Chargeback {
+  chargebackId: String!
+  transactionId: String!
+  customerId: String!
+  status: ChargebackStatus!
+  reason: ChargebackReason!
+  amount: Money!
+  evidenceDeadline: String
+  evidence: [ChargebackEvidence!]!
+  outcome: ChargebackOutcome
+  filedAt: String!
+  resolvedAt: String
+}
+
+type ChargebackEvidence {
+  evidenceId: String!
+  type: EvidenceType!
+  description: String
+  fileUrl: String
+  uploadedAt: String!
+}
+
+type ChargebackOutcome {
+  decision: ChargebackDecision!
+  reason: String
+  decidedAt: String!
+}
+
+type ChargebackConnection {
+  nodes: [Chargeback!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+# ─────────────────────────────────────────────
+# Cases & Alerts
+# ─────────────────────────────────────────────
+
+type Case {
+  caseId: String!
+  title: String!
+  type: CaseType!
+  status: CaseStatus!
+  priority: Priority!
+  customerId: String
+  transactionId: String
+  assignedTo: String
+  notes: [CaseNote!]!
+  alerts: [Alert!]!
+  createdAt: String!
+  updatedAt: String!
+  closedAt: String
+  resolution: String
+}
+
+type CaseNote {
+  noteId: String!
+  content: String!
+  author: String!
+  createdAt: String!
+}
+
+type Alert {
+  alertId: String!
+  type: AlertType!
+  severity: RiskLevel!
+  status: AlertStatus!
+  title: String!
+  description: String
+  customerId: String
+  transactionId: String
+  triggeredAt: String!
+  acknowledgedAt: String
+  resolvedAt: String
+  resolution: AlertResolution
+}
+
+type CaseConnection {
+  nodes: [Case!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type AlertConnection {
+  nodes: [Alert!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+# ─────────────────────────────────────────────
+# Rules Engine
+# ─────────────────────────────────────────────
+
+type Rule {
+  ruleId: String!
+  name: String!
+  description: String
+  type: RuleType!
+  status: RuleStatus!
+  conditions: [RuleCondition!]!
+  action: RuleAction!
+  priority: Int!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type RuleCondition {
+  field: String!
+  operator: RuleOperator!
+  value: String!
+  logicalOperator: LogicalOperator
+}
+
+type RuleAction {
+  type: RuleActionType!
+  parameters: [RuleActionParameter!]!
+}
+
+type RuleActionParameter {
+  key: String!
+  value: String!
+}
+
+# ─────────────────────────────────────────────
+# Webhooks
+# ─────────────────────────────────────────────
+
+type Webhook {
+  webhookId: String!
+  url: String!
+  events: [WebhookEvent!]!
+  status: WebhookStatus!
+  secret: String
+  createdAt: String!
+  lastDeliveredAt: String
+  deliveryFailures: Int
+}
+
+# ─────────────────────────────────────────────
+# Organization
+# ─────────────────────────────────────────────
+
+type Organization {
+  orgId: String!
+  name: String!
+  plan: String
+  apiKeys: [APIKey!]!
+  settings: OrgSettings!
+}
+
+type APIKey {
+  keyId: String!
+  name: String!
+  prefix: String!
+  scopes: [String!]!
+  createdAt: String!
+  lastUsedAt: String
+  status: APIKeyStatus!
+}
+
+type OrgSettings {
+  riskThresholds: RiskThresholds!
+  notificationsEnabled: Boolean!
+  amlEnabled: Boolean!
+  kycEnabled: Boolean!
+  cryptoScreeningEnabled: Boolean!
+}
+
+type RiskThresholds {
+  low: Float!
+  medium: Float!
+  high: Float!
+}
+
+# ─────────────────────────────────────────────
+# Shared / Utility Types
+# ─────────────────────────────────────────────
+
+type RiskSignal {
+  name: String!
+  description: String
+  severity: RiskLevel!
+  value: String
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+# ─────────────────────────────────────────────
+# Input Types
+# ─────────────────────────────────────────────
+
+input CreateDeviceSessionInput {
+  customerId: String
+  userAgent: String
+  ipAddress: String
+  metadata: String
+}
+
+input CreateCustomerInput {
+  externalId: String
+  email: String!
+  phone: String
+  firstName: String
+  lastName: String
+  dateOfBirth: String
+  address: AddressInput
+}
+
+input UpdateCustomerInput {
+  email: String
+  phone: String
+  address: AddressInput
+}
+
+input AddressInput {
+  street1: String
+  street2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+}
+
+input KYCVerificationInput {
+  customerId: String!
+  level: KYCLevel!
+  documentType: DocumentType!
+  documentFrontUrl: String!
+  documentBackUrl: String
+  selfieUrl: String
+}
+
+input KYBVerificationInput {
+  businessId: String!
+  businessName: String!
+  registrationNumber: String
+  taxId: String
+  country: String!
+  ubos: [UBOInput!]
+}
+
+input UBOInput {
+  name: String!
+  dateOfBirth: String
+  country: String
+  ownershipPercentage: Float
+}
+
+input AMLScreeningInput {
+  customerId: String!
+  name: String!
+  dateOfBirth: String
+  country: String
+  entityType: EntityType!
+}
+
+input TransactionInput {
+  externalId: String
+  customerId: String!
+  type: TransactionType!
+  amount: Float!
+  currency: String!
+  senderAccountNumber: String
+  recipientAccountNumber: String
+  paymentMethodType: PaymentMethodType
+  deviceSessionKey: String
+  ipAddress: String
+}
+
+input ChargebackDisputeInput {
+  transactionId: String!
+  reason: ChargebackReason!
+  amount: Float!
+  currency: String!
+  evidence: [EvidenceInput!]
+}
+
+input EvidenceInput {
+  type: EvidenceType!
+  description: String
+  fileUrl: String
+}
+
+input CreateCaseInput {
+  title: String!
+  type: CaseType!
+  priority: Priority!
+  customerId: String
+  transactionId: String
+  description: String
+}
+
+input UpdateCaseInput {
+  title: String
+  priority: Priority
+  assignedTo: String
+  status: CaseStatus
+}
+
+input CreateRuleInput {
+  name: String!
+  description: String
+  type: RuleType!
+  conditions: [RuleConditionInput!]!
+  action: RuleActionInput!
+  priority: Int!
+}
+
+input UpdateRuleInput {
+  name: String
+  description: String
+  conditions: [RuleConditionInput!]
+  action: RuleActionInput
+  priority: Int
+  status: RuleStatus
+}
+
+input RuleConditionInput {
+  field: String!
+  operator: RuleOperator!
+  value: String!
+  logicalOperator: LogicalOperator
+}
+
+input RuleActionInput {
+  type: RuleActionType!
+  parameters: [RuleActionParameterInput!]
+}
+
+input RuleActionParameterInput {
+  key: String!
+  value: String!
+}
+
+input CreateWebhookInput {
+  url: String!
+  events: [WebhookEvent!]!
+  secret: String
+}
+
+input CustomerFilter {
+  email: String
+  kycStatus: KYCStatus
+  riskLevel: RiskLevel
+  createdAfter: String
+  createdBefore: String
+}
+
+input TransactionFilter {
+  customerId: String
+  type: TransactionType
+  status: TransactionStatus
+  riskLevel: RiskLevel
+  currency: String
+  amountMin: Float
+  amountMax: Float
+  createdAfter: String
+  createdBefore: String
+}
+
+input ChargebackFilter {
+  customerId: String
+  status: ChargebackStatus
+  reason: ChargebackReason
+  createdAfter: String
+  createdBefore: String
+}
+
+input CaseFilter {
+  type: CaseType
+  status: CaseStatus
+  priority: Priority
+  assignedTo: String
+  createdAfter: String
+  createdBefore: String
+}
+
+input AlertFilter {
+  type: AlertType
+  severity: RiskLevel
+  status: AlertStatus
+  createdAfter: String
+  createdBefore: String
+}
+
+# ─────────────────────────────────────────────
+# Enums
+# ─────────────────────────────────────────────
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  VERY_HIGH
+  CRITICAL
+}
+
+enum RiskRecommendation {
+  ALLOW
+  REVIEW
+  CHALLENGE
+  BLOCK
+}
+
+enum DeviceType {
+  DESKTOP
+  MOBILE
+  TABLET
+  BOT
+  UNKNOWN
+}
+
+enum KYCStatus {
+  NOT_STARTED
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum KYCLevel {
+  BASIC
+  STANDARD
+  ENHANCED
+}
+
+enum KYBStatus {
+  NOT_STARTED
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum AMLStatus {
+  NOT_SCREENED
+  CLEAR
+  FLAGGED
+  REVIEW_REQUIRED
+  BLOCKED
+}
+
+enum DocumentType {
+  PASSPORT
+  DRIVERS_LICENSE
+  NATIONAL_ID
+  RESIDENCE_PERMIT
+  VISA
+  UTILITY_BILL
+}
+
+enum DocumentVerificationStatus {
+  PENDING
+  VERIFIED
+  FAILED
+  EXPIRED
+}
+
+enum VerificationStatus {
+  PENDING
+  PASSED
+  FAILED
+}
+
+enum MatchStatus {
+  OPEN
+  DISMISSED
+  CONFIRMED
+}
+
+enum AMLMatchType {
+  SANCTIONS
+  PEP
+  ADVERSE_MEDIA
+}
+
+enum EntityType {
+  INDIVIDUAL
+  BUSINESS
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  TRANSFER
+  PAYMENT
+  CRYPTO_BUY
+  CRYPTO_SELL
+  CRYPTO_TRANSFER
+  ACH
+  WIRE
+  CARD_PURCHASE
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+  REVERSED
+  FROZEN
+}
+
+enum PaymentMethodType {
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_ACCOUNT
+  CRYPTO_WALLET
+  ACH
+  WIRE
+}
+
+enum CryptoNetwork {
+  BITCOIN
+  ETHEREUM
+  SOLANA
+  POLYGON
+  AVALANCHE
+  TRON
+  BINANCE_SMART_CHAIN
+}
+
+enum CardType {
+  CREDIT
+  DEBIT
+  PREPAID
+  VIRTUAL
+}
+
+enum CardStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+  EXPIRED
+}
+
+enum CardTransactionStatus {
+  AUTHORIZED
+  SETTLED
+  DECLINED
+  REVERSED
+}
+
+enum ChargebackStatus {
+  OPEN
+  EVIDENCE_SUBMITTED
+  UNDER_REVIEW
+  WON
+  LOST
+  WITHDRAWN
+}
+
+enum ChargebackReason {
+  FRAUDULENT
+  ITEM_NOT_RECEIVED
+  ITEM_NOT_AS_DESCRIBED
+  DUPLICATE
+  SUBSCRIPTION_CANCELLED
+  UNRECOGNIZED
+  CREDIT_NOT_PROCESSED
+}
+
+enum ChargebackDecision {
+  WON
+  LOST
+  PARTIAL
+}
+
+enum EvidenceType {
+  RECEIPT
+  TRACKING_INFO
+  COMMUNICATION_LOG
+  REFUND_POLICY
+  TERMS_OF_SERVICE
+  PHOTO
+  OTHER
+}
+
+enum CaseType {
+  FRAUD
+  AML
+  KYC
+  CHARGEBACK
+  SANCTIONS
+  COMPLIANCE
+  OTHER
+}
+
+enum CaseStatus {
+  OPEN
+  IN_PROGRESS
+  PENDING_REVIEW
+  ESCALATED
+  CLOSED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AlertType {
+  FRAUD_DETECTED
+  AML_HIT
+  SANCTIONS_MATCH
+  PEP_MATCH
+  VELOCITY_BREACH
+  DEVICE_ANOMALY
+  BEHAVIOR_ANOMALY
+  CHARGEBACK_RECEIVED
+  KYC_EXPIRY
+}
+
+enum AlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+enum AlertResolution {
+  FALSE_POSITIVE
+  TRUE_POSITIVE
+  INCONCLUSIVE
+}
+
+enum RuleType {
+  FRAUD
+  AML
+  VELOCITY
+  BEHAVIORAL
+  DEVICE
+  CUSTOM
+}
+
+enum RuleStatus {
+  ACTIVE
+  INACTIVE
+  DRAFT
+}
+
+enum RuleOperator {
+  EQUALS
+  NOT_EQUALS
+  GREATER_THAN
+  LESS_THAN
+  GREATER_THAN_OR_EQUAL
+  LESS_THAN_OR_EQUAL
+  CONTAINS
+  NOT_CONTAINS
+  IN
+  NOT_IN
+  IS_NULL
+  IS_NOT_NULL
+}
+
+enum LogicalOperator {
+  AND
+  OR
+}
+
+enum RuleActionType {
+  BLOCK
+  FLAG
+  REVIEW
+  ALERT
+  WEBHOOK
+  CUSTOM
+}
+
+enum WebhookEvent {
+  CUSTOMER_CREATED
+  CUSTOMER_UPDATED
+  KYC_STATUS_UPDATED
+  KYB_STATUS_UPDATED
+  AML_SCREENING_COMPLETED
+  TRANSACTION_CREATED
+  TRANSACTION_RISK_SCORED
+  TRANSACTION_STATUS_UPDATED
+  CHARGEBACK_RECEIVED
+  CHARGEBACK_STATUS_UPDATED
+  CASE_CREATED
+  CASE_STATUS_UPDATED
+  ALERT_TRIGGERED
+  RULE_TRIGGERED
+}
+
+enum WebhookStatus {
+  ACTIVE
+  INACTIVE
+  FAILING
+}
+
+enum APIKeyStatus {
+  ACTIVE
+  REVOKED
+}
