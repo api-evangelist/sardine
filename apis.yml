@@ -6,7 +6,19 @@ description: Sardine is an agentic financial crime platform offering fraud preve
   KYC/KYB identity verification, AML screening, and chargeback protection for banks,
   fintechs, and commerce at enterprise scale.
 type: Index
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: enterprise
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Enterprise
+  confidence: medium
+  source:
+  - plans
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/sardine.png
 url: https://raw.githubusercontent.com/api-evangelist/sardine/refs/heads/main/apis.yml
 created: '2026-06-13'
 modified: '2026-06-13'
