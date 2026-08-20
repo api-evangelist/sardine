@@ -35,6 +35,19 @@ tags:
 - Financial Crime
 - Identity Verification
 - Chargeback Protection
+- Fintech
+tags_raw:
+- Fraud Prevention
+- AML
+- Compliance
+- KYC
+- KYB
+- Device Intelligence
+- Behavior Biometrics
+- Transaction Risk
+- Financial Crime
+- Identity Verification
+- Chargeback Protection
 - FinTech
 apis:
 - aid: sardine:sardine-api
