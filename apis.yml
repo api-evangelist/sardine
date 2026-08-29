@@ -6,6 +6,17 @@ description: Sardine is an agentic financial crime platform offering fraud preve
   KYC/KYB identity verification, AML screening, and chargeback protection for banks,
   fintechs, and commerce at enterprise scale.
 type: Index
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: enterprise
   onboarding: unknown
